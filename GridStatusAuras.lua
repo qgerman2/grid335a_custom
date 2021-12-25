@@ -537,7 +537,7 @@ function GridStatusAuras:UnitGainedBuff(guid, class, name, rank, icon, count, de
 	end
 end
 
-function GridStatusAuras:UnitLostBuff(guid, class, name)
+function GridStatusAuras:UnitLostBuff(guid, class, name, icon)
 	self:Debug("UnitLostBuff", guid, class, name)
 
 	local status = GridStatusAuras.StatusForSpell(name, true)
@@ -550,7 +550,10 @@ function GridStatusAuras:UnitLostBuff(guid, class, name)
 			settings.priority,
 			(settings.range and 40),
 			settings.color,
-			settings.text)
+			settings.text,
+			nil,
+			nil,
+			icon)
 	else
 		self.core:SendStatusLost(guid, status)
 	end
@@ -782,7 +785,8 @@ function GridStatusAuras:ScanUnitAuras(unit)
 	-- handle lost buffs
 	for name in pairs(buff_names) do
 		if not buff_names_seen[name] then
-			self:UnitLostBuff(guid, class, name)
+			local _, _, icon = GetSpellInfo(name)
+			self:UnitLostBuff(guid, class, name, icon)
 		else
 			buff_names_seen[name] = nil
 		end
