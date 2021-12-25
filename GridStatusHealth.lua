@@ -227,23 +227,18 @@ function GridStatusHealth:UpdateUnit(unitid, ignoreRange)
 
 	local healthText
 	local deficitText
-
+	
 	if cur < max then
-		if cur > 999 then
-			healthText = string.format("%.1fk", cur / 1000)
-		else
-			healthText = string.format("%d", cur)
-		end
-
-		local deficit = max - cur
-		if deficit > 999 then
-			deficitText = string.format("-%.1fk", deficit / 1000)
-		else
-			deficitText = string.format("-%d", deficit)
-		end
+		healthText = string.format("%.0f", cur/max*100) .. "%"
 	else
-		healthPriority = 1
-		deficitPriority = 1
+		healthText = "-"
+	end
+	
+	local deficit = max - cur
+	if deficit > 999 then
+		deficitText = string.format("-%.1fk", deficit / 1000)
+	else
+		deficitText = string.format("-%d", deficit)
 	end
 
 	if (cur / max * 100) <= deficitSettings.threshold then
