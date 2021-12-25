@@ -415,7 +415,7 @@ function GridFrameClass.prototype:EnableMouseoverHighlight(enabled)
 end
 
 function GridFrameClass.prototype:SetFrameFont(font, size, outline)
-	self.frame.Text:SetFont(font, size, outline)
+	self.frame.Text:SetFont(font,size, outline)
 	self.frame.Text2:SetFont(font,size, outline)
 	self.frame.IconStackText:SetFont(font, size, "OUTLINE")
 end
@@ -546,6 +546,21 @@ function GridFrameClass.prototype:SetText(text, color)
 		text = text:sub(1, GridFrame.db.profile.textlength)
 	end
 	self.frame.Text:SetText(text)
+	--Text resize with health
+	local healthPercent = string.gsub(text, "%%", "")
+	healthPercent = tonumber(healthPercent)
+	if healthPercent ~= nil then
+		local fontName, _, fontStyle = self.frame.Text:GetFont()
+		if healthPercent < 40 then
+			self.frame.Text:SetFont(fontName, 20, fontStyle)
+		elseif healthPercent < 60 then
+			self.frame.Text:SetFont(fontName, 16, fontStyle)
+		elseif healthPercent < 80 then
+			self.frame.Text:SetFont(fontName, 13, fontStyle)
+		else
+			self.frame.Text:SetFont(fontName, 11, fontStyle)
+		end
+	end
 	if text and text ~= "" then
 		self.frame.Text:Show()
 	else

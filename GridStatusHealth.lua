@@ -227,25 +227,34 @@ function GridStatusHealth:UpdateUnit(unitid, ignoreRange)
 
 	local healthText
 	local deficitText
-	
+	local deficitColor = {r = 1, g = 1, b = 1, a = 1 }
+
 	if cur < max then
-		healthText = string.format("%.0f", cur/max*100) .. "%"
+		if cur > 999 then
+			healthText = string.format("%.1fk", cur / 1000)
+		else
+			healthText = string.format("%d", cur)
+		end
+		local healthPercent = cur / max * 100
+		deficitText = string.format("%.0f", healthPercent) .. "%"
+		if healthPercent < 40 then
+			deficitColor = { r = 1, g = 0, b = 0, a = 1 }
+		elseif healthPercent < 60 then
+			deficitColor = { r = 1, g = 0.85, b = 0, a = 1 }
+		elseif healthPercent < 80 then
+			deficitColor = { r = 1, g = 1, b = 0, a = 1 }
+		end
 	else
-		healthText = "-"
-	end
-	
-	local deficit = max - cur
-	if deficit > 999 then
-		deficitText = string.format("-%.1fk", deficit / 1000)
-	else
-		deficitText = string.format("-%d", deficit)
+		healthPriority = 1
+		deficitText = "-"
+		--deficitPriority = 1
 	end
 
 	if (cur / max * 100) <= deficitSettings.threshold then
 		self.core:SendStatusGained(guid, "unit_healthDeficit",
 			deficitPriority,
 			(deficitSettings.range and 40),
-			(deficitSettings.useClassColors and self.core:UnitColor(guid) or deficitSettings.color),
+			deficitColor,
 			deficitText,
 			cur, max,
 			deficitSettings.icon)
